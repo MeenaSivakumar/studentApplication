@@ -3,8 +3,6 @@ package com.practice.studentApplication.controllers;
 import com.practice.studentApplication.dto.StudentDTO;
 import com.practice.studentApplication.services.StudentApplicationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +38,7 @@ public class StudentController {
     @PutMapping("students/regNo/{regNo}/edit")
     public ResponseEntity<StudentDTO> editStudent(@PathVariable String regNo, @RequestBody StudentDTO studentDTO){
         StudentDTO student = studentApplicationService.editStudent(regNo,studentDTO);
-        if(studentDTO == null){
+        if(student == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(studentDTO,HttpStatus.OK);
