@@ -16,7 +16,7 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                bat 'docker run -d -p 8080:8080 --name student-container student-app'
+                bat 'docker run -d -p 8083:8080 --name student-container student-app'
             }
         }
     }
