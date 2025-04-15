@@ -1,45 +1,23 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "student-app:latest"
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Build with Maven') {
             steps {
-                // Pull the code from your GitHub repository
-                git 'https://github.com/MeenaSivakumar/studentApplication.git'
+                sh 'mvn clean install'
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                // Build the project with Maven
-                sh 'mvn clean package -DskipTests'
+                sh 'docker build -t student-app .'
             }
         }
 
-        stage('Docker Build') {
+        stage('Run Docker Container') {
             steps {
-                // Build Docker image
-                sh 'docker build -t ${DOCKER_IMAGE} .'
+                sh 'docker run -d -p 8080:8080 --name student-container student-app'
             }
-        }
-
-        stage('Docker Run') {
-            steps {
-                // Run the Docker container
-                sh 'docker run -d -p 8080:8080 --name student-app ${DOCKER_IMAGE}'
-            }
-        }
-    }
-
-    post {
-        always {
-            // Clean up Docker container after build
-            sh 'docker stop student-app || true'
-            sh 'docker rm student-app || true'
         }
     }
 }
