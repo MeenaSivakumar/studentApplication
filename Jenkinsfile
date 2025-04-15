@@ -2,51 +2,44 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'student-app'
-        IMAGE_TAG = 'latest'
+        DOCKER_IMAGE = "student-app:latest"
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
+                // Pull the code from your GitHub repository
                 git 'https://github.com/MeenaSivakumar/studentApplication.git'
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build') {
             steps {
-                echo '🔧 Building the application...'
+                // Build the project with Maven
                 sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Docker Build') {
             steps {
-                echo '🐳 Building Docker image...'
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                // Build Docker image
+                sh 'docker build -t ${DOCKER_IMAGE} .'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Docker Run') {
             steps {
-                echo '🚀 Running Docker container...'
-                sh 'docker stop student-app || true'
-                sh 'docker rm student-app || true'
-                sh "docker run -d -p 8080:8080 --name student-app ${IMAGE_NAME}:${IMAGE_TAG}"
+                // Run the Docker container
+                sh 'docker run -d -p 8080:8080 --name student-app ${DOCKER_IMAGE}'
             }
         }
     }
 
     post {
         always {
-            echo '🧹 Cleaning up workspace...'
-            deleteDir()
-        }
-        success {
-            echo '✅ Build and deploy successful!'
-        }
-        failure {
-            echo '❌ Build or deploy failed.'
+            // Clean up Docker container after build
+            sh 'docker stop student-app || true'
+            sh 'docker rm student-app || true'
         }
     }
 }
