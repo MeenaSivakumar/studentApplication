@@ -7,6 +7,15 @@ pipeline {
                 bat 'mvn clean install'
             }
         }
+               stage('Stop and Remove Previous Container') {
+                   steps {
+                       script {
+
+                           bat "docker stop student-container || true"
+                           bat "docker rm student-container || true"
+                       }
+                   }
+               }
 
         stage('Build Docker Image') {
             steps {
